@@ -16,10 +16,10 @@ This Azure Function sample is written in C# and uses Visual Studio Code.
 
 ### Packages Required
 
-dotnet add package Microsoft.Azure.Functions.Extensions --version 1.1.0
-dotnet add package Microsoft.Azure.WebJobs.Extensions.CosmosDB --version 3.0.10 
-dotnet add package Microsoft.ApplicationInsights --version 2.18.0
-dotnet add package Microsoft.Azure.Cosmos --version 3.25.0
+- dotnet add package Microsoft.Azure.Functions.Extensions --version 1.1.0
+- dotnet add package Microsoft.Azure.WebJobs.Extensions.CosmosDB --version 3.0.10 
+- dotnet add package Microsoft.ApplicationInsights --version 2.18.0
+- dotnet add package Microsoft.Azure.Cosmos --version 3.25.0
 
 ### Information
 
