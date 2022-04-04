@@ -17,14 +17,15 @@ using Microsoft.Azure.Cosmos;
 
 namespace Company.Function
 {
-    public static class GetDataFromCosmosDb
+    public class GetDataFromCosmosDb
     {
+
         ///
         /// .NET SDK v2 Approach
         /// https://docs.microsoft.com/en-us/azure/cosmos-db/sql/find-request-unit-charge?tabs=dotnetv2
         ///
         [FunctionName("SDKv2")]
-        public static async Task<IActionResult> SDKv2(
+        public async Task<IActionResult> SDKv2(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             [CosmosDB(databaseName: "cosmosdb", collectionName: "posts", ConnectionStringSetting="CosmosDBConnection")] DocumentClient client,
             ILogger log)
@@ -62,11 +63,16 @@ namespace Company.Function
         /// https://docs.microsoft.com/en-us/azure/cosmos-db/sql/find-request-unit-charge?tabs=dotnetv3
         ///
 
-        private static CosmosClient cosmosClient = new CosmosClient(Environment.GetEnvironmentVariable("CosmosDBConnectionEndpoint"), Environment.GetEnvironmentVariable("CosmosDBConnectionAccountKey"));
-        private static Container _container = cosmosClient.GetContainer("cosmosdb", "posts");
+        private readonly CosmosClient cosmosClient;
+        private readonly Container container;
+        public GetDataFromCosmosDb(CosmosClient cosmosClient)
+        {
+            this.cosmosClient = cosmosClient;
+            this.container = cosmosClient.GetContainer("cosmosdb", "posts");
+        }
 
         [FunctionName("SDKv3")]
-        public static async Task<IActionResult> SDKv3(
+        public async Task<IActionResult> SDKv3(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
@@ -77,7 +83,7 @@ namespace Company.Function
             log.LogInformation($"Searching for: {creatorId}");
        
             QueryDefinition queryDefinition = new QueryDefinition("select * From c where c.CreatorId = @CreatorId").WithParameter("@CreatorId", creatorId);
-            using (Microsoft.Azure.Cosmos.FeedIterator<PostsModel> feedIterator = _container.GetItemQueryIterator<PostsModel>(queryDefinition))
+            using (Microsoft.Azure.Cosmos.FeedIterator<PostsModel> feedIterator = this.container.GetItemQueryIterator<PostsModel>(queryDefinition))
             {
                 while (feedIterator.HasMoreResults)
                 {
